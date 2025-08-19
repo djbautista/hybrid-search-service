@@ -1,8 +1,8 @@
-import "dotenv/config";
+import 'dotenv/config';
 
-import express from "express";
-import OpenAI from "openai";
-import { Pool } from "pg";
+import express from 'express';
+import OpenAI from 'openai';
+import { Pool } from 'pg';
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -16,7 +16,7 @@ const EMBEDDING_MODEL = "text-embedding-3-small";
 const EMBEDDING_DIM = 1536;
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok2", date: new Date().toISOString() });
+  res.json({ status: "ok", date: new Date().toISOString() });
 });
 
 app.post("/hybrid-search", async (req, res) => {
@@ -59,4 +59,11 @@ app.post("/hybrid-search", async (req, res) => {
     console.error("hybrid-search error:", e?.message || e);
     res.status(500).json({ error: "Error interno" });
   }
+});
+
+
+const port = Number(process.env.PORT) || 8080;
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Hybrid search service on :${port}`);
 });
