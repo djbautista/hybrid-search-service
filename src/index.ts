@@ -12,8 +12,8 @@ const pool = new Pool({
 });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const EMBEDDING_MODEL = "text-embedding-3-large";
-const EMBEDDING_DIM = 512;
+const EMBEDDING_MODEL = "text-embedding-3-small";
+const EMBEDDING_DIM = 1536;
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", date: new Date().toISOString() });
