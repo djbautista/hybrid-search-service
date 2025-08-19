@@ -16,7 +16,7 @@ const EMBEDDING_MODEL = "text-embedding-3-small";
 const EMBEDDING_DIM = 1536;
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", date: new Date().toISOString() });
+  res.json({ status: "ok2", date: new Date().toISOString() });
 });
 
 app.post("/hybrid-search", async (req, res) => {
