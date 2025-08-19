@@ -12,6 +12,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', date: new Date().toISOString() });
+});
+
 app.post('/hybrid-search', async (req, res) => {
   try {
     const { query, matchCount = 10, alpha = 0.5 } = req.body ?? {};
