@@ -57,7 +57,7 @@ app.post("/hybrid-search", async (req, res) => {
     console.log("----------------------------------------------------------------");
 
     console.log(new Date().toISOString(), " - ", "hybrid-search request", "-", { query, matchCount, fullTextWeight, semanticWeight, rrfK });
-    console.log("response", { data: rows });
+    console.log("response", { rowsLength: rows.length, firstRow: rows?.[0]?.metadata });
 
     console.log("----------------------------------------------------------------");
 
