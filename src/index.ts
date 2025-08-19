@@ -1,8 +1,8 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-import express from 'express';
-import OpenAI from 'openai';
-import { Pool } from 'pg';
+import express from "express";
+import OpenAI from "openai";
+import { Pool } from "pg";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -54,13 +54,19 @@ app.post("/hybrid-search", async (req, res) => {
       [query, vectorLiteral, matchCount, fullTextWeight, semanticWeight, rrfK]
     );
 
+    console.log("----------------------------------------------------------------");
+
+    console.log(new Date().toISOString(), " - ", "hybrid-search request", "-", { query, matchCount, fullTextWeight, semanticWeight, rrfK });
+    console.log("response", { data: rows });
+
+    console.log("----------------------------------------------------------------");
+
     res.json({ data: rows });
   } catch (e: any) {
     console.error("hybrid-search error:", e?.message || e);
     res.status(500).json({ error: "Error interno" });
   }
 });
-
 
 const port = Number(process.env.PORT) || 8080;
 
