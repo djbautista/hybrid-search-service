@@ -1,8 +1,8 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-import express from 'express';
-import OpenAI from 'openai';
-import { Pool } from 'pg';
+import express from "express";
+import OpenAI from "openai";
+import { Pool } from "pg";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -32,19 +32,26 @@ app.post("/hybrid-search", async (req, res) => {
       input: query,
       dimensions: EMBEDDING_DIM
     });
-    const vector = emb.data[0].embedding;
+
+    const vecArray: number[] = emb.data[0].embedding;
+    if (!Array.isArray(vecArray) || vecArray.length !== EMBEDDING_DIM) {
+      throw new Error(`Embedding inválido: dimensión = ${Array.isArray(vecArray) ? vecArray.length : "N/A"}`);
+    }
+    const vectorLiteral = JSON.stringify(vecArray);
 
     const { rows } = await pool.query(
-      `SELECT *
-         FROM hybrid_search(
-           $1::text,
-           $2::vector(${EMBEDDING_DIM}),
-           $3::int,
-           $4::float,
-           $5::float,
-           $6::int
-         )`,
-      [query, vector, matchCount, fullTextWeight, semanticWeight, rrfK]
+      `
+      SELECT *
+      FROM hybrid_search(
+        $1::text,                               -- query_text
+        $2::vector(${EMBEDDING_DIM}),           -- query_embedding (literal "[...]")
+        $3::int,                                -- match_count
+        $4::float,                              -- full_text_weight
+        $5::float,                              -- semantic_weight
+        $6::int                                 -- rrf_k
+      )
+      `,
+      [query, vectorLiteral, matchCount, fullTextWeight, semanticWeight, rrfK]
     );
 
     res.json({ data: rows });
@@ -52,10 +59,4 @@ app.post("/hybrid-search", async (req, res) => {
     console.error("hybrid-search error:", e?.message || e);
     res.status(500).json({ error: "Error interno" });
   }
-});
-
-const port = Number(process.env.PORT) || 8080;
-
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Hybrid search service on :${port}`);
 });
